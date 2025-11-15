@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Visualizador Web de Alunos (Flask)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f9; }
+        h1 { color: #333; text-align: center; margin-bottom: 20px;}
+        
+        .action-buttons { margin-bottom: 20px; }
+        
+        .btn-add { background-color: #28a745; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px; display: inline-block; transition: background-color 0.3s; }
+        .btn-add:hover { background-color: #1e7e34; }
+        
+        .btn-new-turma { 
+            background-color: #ff9800; /* Laranja */
+            color: white; 
+            padding: 10px 15px; 
+            text-decoration: none; 
+            border-radius: 5px; 
+            display: inline-block; 
+            margin-left: 10px; 
+            transition: background-color 0.3s;
+        }
+        .btn-new-turma:hover { background-color: #e68900; }
+        
+        .btn-delete {
+            background-color: #dc3545; /* Vermelho */
+            color: white;
+            padding: 6px 10px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 0.9em;
+            transition: background-color 0.3s;
+            white-space: nowrap; 
+        }
+
+        .btn-delete:hover {
+            background-color: #c82333;
+        }
+        
+        .search-form { margin-bottom: 20px; display: flex; gap: 10px; }
+        .search-form input[type="text"] { flex-grow: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+        .search-form button { padding: 10px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.3s; }
+        .search-form button:hover { background-color: #0056b3; }
+        
+        .table-container { overflow-x: auto; width: 100%; margin: 0 auto; }
+        table { width: 100%; min-width: 700px; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); background-color: white; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: center; }
+        th { background-color: #e9ecef; color: #343a40; font-weight: bold; }
+        td:nth-child(6) { font-weight: bold; background-color: #e6f7ff; } 
+        td:nth-child(1) { font-weight: 500; text-align: left; } 
+        th:last-child, td:last-child { width: 1%; white-space: nowrap; } 
+        
+        .vazio { background-color: #fff3cd; color: #856404; padding: 15px; border: 1px solid #ffeeba; text-align: center; border-radius: 4px; margin-top: 20px; }
+        
+        @media (max-width: 768px) { 
+            body { padding: 10px; } 
+            h1 { font-size: 1.5em; } 
+            .search-form { flex-direction: column; } 
+            .action-buttons a { display: block; width: 100%; margin-left: 0; margin-top: 10px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Tabela de Notas dos Alunos</h1>
+    
+    <form method="GET" action="{{ url_for('index') }}" class="search-form">
+        <input type="text" name="q" placeholder="Buscar aluno por nome..." value="{{ termo_busca_atual if termo_busca_atual else '' }}">
+        <button type="submit">Buscar</button>
+    </form>
+    
+    <div class="action-buttons">
+        <a href="{{ url_for('formulario_adicionar') }}" class="btn-add">
+            + Adicionar Novo Aluno
+        </a>
+        <a href="{{ url_for('formulario_cadastrar_turma') }}" class="btn-new-turma">
+            + Cadastrar Nova Turma
+        </a>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    {% for item in cabecalho %}
+                    <th>{{ item }}</th>
+                    {% endfor %}
+                    <th>Ação</th> 
+                </tr>
+            </thead>
+            <tbody>
+                {% for aluno in alunos %}
+                <tr>
+                    {% for dado in aluno %}
+                    <td>{{ dado }}</td>
+                    {% endfor %}
+                    
+                    <td>
+                        <a href="{{ url_for('apagar_aluno', matricula=aluno[2]) }}" 
+                           class="btn-delete" 
+                           onclick="return confirm('Tem certeza que deseja apagar o aluno {{ aluno[1] }}? Esta ação não pode ser desfeita.')">
+                            Apagar
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    {% if not alunos %}
+    <div class="vazio">
+        {% if termo_busca_atual %}
+        Nenhum aluno encontrado para a busca: "{{ termo_busca_atual }}".
+        {% else %}
+        A tabela está vazia. Use o botão acima para adicionar o primeiro aluno!
+        {% endif %}
+    </div>
+    {% endif %}
+
+</body>
+</html>

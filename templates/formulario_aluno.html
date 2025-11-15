@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Adicionar Novo Aluno</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f9; }
+        .container { max-width: 500px; margin: 20px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        h1 { color: #333; text-align: center; }
+        label { display: block; margin-top: 15px; font-weight: bold; color: #555; }
+        input[type="text"], input[type="number"], select { 
+            width: 100%; 
+            padding: 10px; 
+            margin-top: 5px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            box-sizing: border-box; 
+        }
+        button { background-color: #007bff; color: white; padding: 12px 15px; border: none; border-radius: 4px; cursor: pointer; margin-top: 25px; width: 100%; font-size: 17px; transition: background-color 0.3s; }
+        button:hover { background-color: #0056b3; }
+        .voltar { display: block; text-align: center; margin-top: 20px; color: #007bff; text-decoration: none; padding: 8px;}
+        @media (max-width: 600px) { body { padding: 10px; } .container { margin: 10px auto; padding: 15px; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Adicionar Novo Aluno</h1>
+        
+        <form method="POST" action="{{ url_for('salvar_aluno') }}">
+            
+            <label for="id_turma">Selecione a Turma:</label>
+            <select id="id_turma" name="id_turma" required>
+                {% if not turmas %}
+                    <option value="">Nenhuma turma cadastrada! Cadastre uma turma primeiro.</option>
+                {% else %}
+                    {% for id, nome in turmas.items() %}
+                        <option value="{{ id }}">{{ nome }} ({{ id }})</option>
+                    {% endfor %}
+                {% endif %}
+            </select>
+
+            <label for="nome">Nome Completo:</label>
+            <input type="text" id="nome" name="nome" required>
+
+            <label for="matricula">Matrícula:</label>
+            <input type="text" id="matricula" name="matricula" required>
+
+            <label for="nota1">Nota 1:</label>
+            <input type="number" id="nota1" name="nota1" step="0.1" min="0" max="10" required>
+
+            <label for="nota2">Nota 2:</label>
+            <input type="number" id="nota2" name="nota2" step="0.1" min="0" max="10" required>
+            
+            <button type="submit">Salvar Aluno</button>
+        </form>
+        
+        <a href="{{ url_for('index') }}" class="voltar">← Voltar para a Tabela</a>
+    </div>
+</body>
+</html>
